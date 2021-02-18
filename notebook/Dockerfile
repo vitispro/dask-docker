@@ -46,4 +46,22 @@ RUN mkdir /opt/app \
 COPY --chown=1000:100 examples/ /home/$NB_USER/examples
 COPY prepare.sh /usr/bin/prepare.sh
 
+USER root
+RUN apt-get update \
+    && apt-get -y install curl \
+    && apt-get install -y gnupg2
+
+USER root
+RUN pip install seaborn \
+    && pip install gcsfs \
+    && pip install matplotlib
+
+USER root
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg  add - && apt-get update -y && apt-get install google-cloud-sdk -y
+
+USER root
+RUN conda install -c conda-forge ipywidgets \
+    && pip install google-api-python-client httplib2 \
+    && pip install git+https://github.com/dask/dask-cloudprovider.git@fix/on_host_maintenance
+
 ENTRYPOINT ["tini", "--", "/usr/bin/prepare.sh"]
