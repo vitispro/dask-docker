@@ -64,6 +64,7 @@ RUN conda install -c conda-forge ipywidgets \
     && pip install holoviews \
     && pip install datashader \
     && pip install google-api-python-client httplib2 \
-    && pip install git+https://github.com/dask/dask-cloudprovider.git@fix/on_host_maintenance
+    && pip install git+https://github.com/dask/dask-cloudprovider.git \
+    && conda install fastparquet pyarrow -c conda-forge
 
 ENTRYPOINT ["tini", "--", "/usr/bin/prepare.sh"]
